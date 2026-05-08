@@ -119,15 +119,20 @@ function populateFilters(options) {
   }
 }
 
+function updateText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
 function renderCards(s) {
-  document.getElementById('cardRevenue').textContent = formatVND(s.totalRevenue);
-  document.getElementById('cardKpiTarget').textContent = formatVND(s.kpiTarget);
-  document.getElementById('cardKpiPercent').textContent = s.kpiPercent.toFixed(1) + '%';
-  document.getElementById('cardHvmCount').textContent = s.countHVM;
-  document.getElementById('cardHvmTotal').textContent = formatVND(s.thuHVM);
-  document.getElementById('cardUpcCount').textContent = s.countUPC;
-  document.getElementById('cardUpcTotal').textContent = formatVND(s.thuUPCB);
-  document.getElementById('cardCongNo').textContent = formatVND(s.congNo);
+  updateText('cardRevenue', formatVND(s.totalRevenue));
+  updateText('cardKpiTarget', formatVND(s.kpiTarget));
+  updateText('cardKpiPercent', s.kpiPercent.toFixed(1) + '%');
+  updateText('cardHvmCount', s.countHVM);
+  updateText('cardHvmTotal', 'Thu: ' + formatVND(s.thuHVM));
+  updateText('cardUpcCount', s.countUPC);
+  updateText('cardUpcTotal', 'Thu: ' + formatVND(s.thuUPCB));
+  updateText('cardCongNo', formatVND(s.congNo));
 }
 
 function renderForecast(s, consultants) {
@@ -135,11 +140,11 @@ function renderForecast(s, consultants) {
   const expectedPercent = s.kpiTarget > 0 ? (expected / s.kpiTarget * 100) : 0;
   const missing = Math.max(0, s.kpiTarget - expected);
 
-  document.getElementById('forecastDebt').textContent = formatVND(s.totalDebt);
-  document.getElementById('forecastDebtSub').textContent = s.studentsWithDebt + ' học viên chưa đóng';
-  document.getElementById('forecastExpected').textContent = formatVND(expected);
-  document.getElementById('forecastPercent').textContent = expectedPercent.toFixed(1) + '%';
-  document.getElementById('forecastMissing').textContent = formatVND(missing);
+  updateText('forecastDebt', formatVND(s.totalDebt));
+  updateText('forecastDebtSub', s.studentsWithDebt + ' học viên chưa đóng');
+  updateText('forecastExpected', formatVND(expected));
+  updateText('forecastPercent', expectedPercent.toFixed(1) + '%');
+  updateText('forecastMissing', formatVND(missing));
 
   const marquee = document.getElementById('personalForecasts');
   marquee.innerHTML = '';
