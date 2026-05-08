@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HALO Sales Dashboard - Hệ thống báo cáo thông minh</title>
+  <meta name="description" content="Dashboard theo dõi doanh số, KPI và dự báo tăng trưởng cho HALO Education.">
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+</head>
+<body>
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text">ĐANG TẢI DỮ LIỆU...</div>
+  </div>
+
+  <main class="dashboard" id="dashboardContent">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-title">
+        <h1>🏢 HALO SALES</h1>
+        <span class="badge">DASHBOARD v1.0</span>
+      </div>
+      
+      <div class="filters">
+        <div class="filter-group">
+          <label>Chế độ lọc</label>
+          <div class="filter-toggle">
+            <button id="btnModeMonth" class="active">Tháng</button>
+            <button id="btnModeDate">Ngày</button>
+          </div>
+        </div>
+
+        <div class="filter-group" id="monthFilterGroup">
+          <label>Chọn tháng</label>
+          <select id="filterMonth"></select>
+        </div>
+
+        <div class="date-filters" id="dateFilterGroup">
+          <div class="filter-group">
+            <label>Từ ngày</label>
+            <input type="date" id="filterDateFrom">
+          </div>
+          <div class="filter-group">
+            <label>Đến ngày</label>
+            <input type="date" id="filterDateTo">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label>Tư vấn viên</label>
+          <select id="filterConsultant">
+            <option value="All">Tất cả tư vấn viên</option>
+          </select>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <button class="btn-reload" id="btnReload">⟳ Tải lại</button>
+          <button class="btn-download" id="btnDownload">📸 Tải báo cáo</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- KPI CARDS -->
+    <section class="kpi-grid">
+      <div class="kpi-card card-emerald">
+        <div class="glow"></div>
+        <div class="icon">💰</div>
+        <div class="label">Thực thu doanh số</div>
+        <div class="value" id="cardRevenue">—</div>
+        <div class="sub">Tổng thu thực tế trong kỳ</div>
+      </div>
+      
+      <div class="kpi-card card-blue">
+        <div class="glow"></div>
+        <div class="icon">🎯</div>
+        <div class="label">KPI Chỉ tiêu</div>
+        <div class="value" id="cardKpiTarget">—</div>
+        <div class="sub">Mục tiêu đề ra</div>
+      </div>
+
+      <div class="kpi-card card-violet">
+        <div class="glow"></div>
+        <div class="icon">📈</div>
+        <div class="label">Tỉ lệ hoàn thành</div>
+        <div class="value" id="cardKpiPercent">—</div>
+        <div class="sub">Tiến độ đạt KPI</div>
+      </div>
+
+      <div class="kpi-card card-cyan">
+        <div class="glow"></div>
+        <div class="icon">✨</div>
+        <div class="label">Số lượng HVM</div>
+        <div class="value" id="cardHvmCount">—</div>
+        <div class="sub">Học viên đăng ký mới</div>
+      </div>
+
+      <div class="kpi-card card-amber">
+        <div class="glow"></div>
+        <div class="icon">🔄</div>
+        <div class="label">Số lượng UPC</div>
+        <div class="value" id="cardUpcCount">—</div>
+        <div class="sub">Học viên tái đăng ký</div>
+      </div>
+
+      <div class="kpi-card card-rose">
+        <div class="glow"></div>
+        <div class="icon">📋</div>
+        <div class="label">Tiền thu Công nợ</div>
+        <div class="value" id="cardCongNo">—</div>
+        <div class="sub">Thu từ nợ cũ</div>
+      </div>
+    </section>
+
+    <!-- FORECAST -->
+    <section class="forecast-section">
+      <h2 class="section-title">🔮 Dự báo doanh thu & KPI</h2>
+      <div class="forecast-grid">
+        <div class="forecast-item">
+          <div class="f-label">CÔNG NỢ CHƯA THU</div>
+          <div class="f-value" id="forecastDebt" style="color:var(--orange)">—</div>
+          <div class="f-sub" id="forecastDebtSub">0 học viên</div>
+        </div>
+        <div class="forecast-item">
+          <div class="f-label">DỰ KIẾN THỰC THU</div>
+          <div class="f-value" id="forecastExpected" style="color:var(--emerald)">—</div>
+          <div class="f-sub">Bao gồm thực thu + nợ</div>
+        </div>
+        <div class="forecast-item">
+          <div class="f-label">DỰ BÁO % KPI</div>
+          <div class="f-value" id="forecastPercent" style="color:var(--violet)">—</div>
+          <div class="f-sub">Mức độ hoàn thành dự kiến</div>
+        </div>
+        <div class="forecast-item">
+          <div class="f-label">CÒN THIẾU</div>
+          <div class="f-value" id="forecastMissing" style="color:var(--rose)">—</div>
+          <div class="f-sub">Số tiền cần thêm để đạt KPI</div>
+        </div>
+      </div>
+
+      <div class="marquee-container">
+        <div class="marquee-content" id="personalForecasts">
+          <span style="color:var(--text-muted)">Đang tải dự báo cá nhân...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHARTS -->
+    <div class="chart-row">
+      <div class="chart-card">
+        <h3 class="section-title">🥧 Cơ cấu doanh thu</h3>
+        <div class="chart-container">
+          <canvas id="structureChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3 class="section-title">🌍 Nguồn học viên mới</h3>
+        <div class="chart-container">
+          <canvas id="sourceChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- RANKING -->
+    <section class="ranking-section">
+      <h2 class="section-title">🏆 Xếp hạng TOP Sale</h2>
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th style="width: 80px; text-align: center;">#</th>
+            <th>Tư vấn viên</th>
+            <th style="text-align: right;">KPI mục tiêu</th>
+            <th style="text-align: right;">Doanh số</th>
+            <th>Tiến độ</th>
+          </tr>
+        </thead>
+        <tbody id="rankingBody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
